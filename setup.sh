@@ -14,7 +14,6 @@ IFS=$'\n\t'
 
 # --- Global Variables ---
 APP_NAME="mobiadd"
-REPO_URL="https://github.com/semaphoreui/semaphore.git"
 GO_VERSION="1.23.4"
 INSTALL_DIR="/usr/local/bin"
 CONFIG_DIR="/etc/${APP_NAME}"
@@ -388,7 +387,6 @@ step_install_service() {
     cat <<EOF > "$SERVICE_FILE"
 [Unit]
 Description=Mobiadd Automation Server
-Documentation=https://github.com/semaphoreui/semaphore
 After=network.target mysql.service
 
 [Service]
