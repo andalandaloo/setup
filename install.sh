@@ -5,57 +5,85 @@
 # Detects OS and launches the appropriate installation script
 # ==============================================================================
 
-# --- Colors ---
+# --- Colors & Formatting ---
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
+CYAN='\033[0;36m'
 YELLOW='\033[1;33m'
+PURPLE='\033[0;35m'
 NC='\033[0m' # No Color
 BOLD='\033[1m'
+DIM='\033[2m'
 
 # --- Helpers ---
-log_info() { echo -e "${BLUE}ℹ️  $1${NC}"; }
-log_error() { echo -e "${RED}❌ $1${NC}"; }
-log_warn() { echo -e "${YELLOW}⚠️  $1${NC}"; }
+log_info()    { echo -e "${BLUE}ℹ️  ${BOLD}[INFO]${NC} $1"; }
+log_success() { echo -e "${GREEN}✅ ${BOLD}[OK]${NC}   $1"; }
+log_warn()    { echo -e "${YELLOW}⚠️  ${BOLD}[WARN]${NC} $1"; }
+log_error()   { echo -e "${RED}❌ ${BOLD}[ERR]${NC}  $1"; }
+
+print_line() {
+    echo -e "${DIM}------------------------------------------------------------${NC}"
+}
 
 # --- Main Logic ---
 
-echo -e "${BLUE}${BOLD}"
+# Clear screen for a fresh start
+# clear 
+
+echo -e "${CYAN}${BOLD}"
 cat << "EOF"
-    __  ___      __    _            __    __
-   /  |/  /___  / /_  (_)___ ______/ /___/ /
-  / /|_/ / __ \/ __ \/ / __ `/ __  / __  / 
- / /  / / /_/ / /_/ / / /_/ / /_/ / /_/ /  
-/_/  /_/\____/_.___/_/\__,_/\__,_/\__,_/   
+ ___ ___   ___   ____   ____   ____  ___    ___   
+|   |   | /   \ |    \ |    | /    ||   \  |   \  
+| _   _ ||     ||  o  ) |  | |  o  ||    \ |    \ 
+|  \_/  ||  O  ||     | |  | |     ||  D  ||  D  |
+|   |   ||     ||  O  | |  | |  _  ||     ||     |
+|   |   ||     ||     | |  | |  |  ||     ||     |
+|___|___| \___/ |_____||____||__|__||_____||_____|   
                                            
-    Powering Global Operators with Intelligent Telecom Solutions           
+┏┓         •      ┏┓┓  ┓   ┓  ┏┓                   • ┓   ┳     ┓┓•         ┏┳┓  ┓          ┏┓  ┓   •     
+┃┃┏┓┓┏┏┏┓┏┓┓┏┓┏┓  ┃┓┃┏┓┣┓┏┓┃  ┃┃┏┓┏┓┏┓┏┓╋┏┓┏┓┏  ┓┏┏┓╋┣┓  ┃┏┓╋┏┓┃┃┓┏┓┏┓┏┓╋   ┃ ┏┓┃┏┓┏┏┓┏┳┓  ┗┓┏┓┃┓┏╋┓┏┓┏┓┏
+┣┛┗┛┗┻┛┗ ┛ ┗┛┗┗┫  ┗┛┗┗┛┗┛┗┻┗  ┗┛┣┛┗ ┛ ┗┻┗┗┛┛ ┛  ┗┻┛┗┗┛┗  ┻┛┗┗┗ ┗┗┗┗┫┗ ┛┗┗   ┻ ┗ ┗┗ ┗┗┛┛┗┗  ┗┛┗┛┗┗┻┗┗┗┛┛┗┛
+               ┛                ┛                                  ┛                                     
+
 EOF
-echo "=============================================="
 echo -e "${NC}"
+print_line
 
 OS_TYPE=$(uname -s)
 ARCH=$(uname -m)
 
-log_info "System Detection:"
-echo "  OS:   $OS_TYPE"
-echo "  Arch: $ARCH"
+echo -e "${PURPLE}🔍 System Detection:${NC}"
+echo -e "   ${BOLD}OS:${NC}   $OS_TYPE"
+echo -e "   ${BOLD}Arch:${NC} $ARCH"
+print_line
 echo ""
 
+# Small delay for effect
+sleep 0.5
+
 if [[ "$OS_TYPE" == "Linux" ]]; then
-    log_info "Detected Linux. Downloading and running installer..."
-    curl -fsSL https://gist.githubusercontent.com/andalandaloo/f7ddb94459af917ed0272308aa53370d/raw/5ce8caa7c6ff6fca9826f7a6ce4ecac922498f19/setup.sh | sudo bash
+    log_info "Detected Linux Environment."
+    log_info "Fetching latest Linux installer..."
+    echo ""
+    curl -fsSL https://raw.githubusercontent.com/andalandaloo/setup/refs/heads/main/setup.sh | sudo bash
 
 elif [[ "$OS_TYPE" == "Darwin" ]]; then
-    log_info "Detected macOS. Downloading and running installer..."
-    curl -fsSL https://gist.githubusercontent.com/andalandaloo/0f99ffbc1e4eb9a442b44e1678122a38/raw/216167d2632c07eff6c942821b5d1a3d0dc5f6f3/setup_macos.sh | sudo bash
+    log_info "Detected macOS Environment."
+    log_info "Fetching latest macOS installer..."
+    echo ""
+    curl -fsSL https://raw.githubusercontent.com/andalandaloo/setup/refs/heads/main/setup_macos.sh | sudo bash
 
 elif [[ "$OS_TYPE" =~ CYGWIN|MINGW|MSYS ]]; then
     # Windows (Git Bash / WSL)
     log_warn "Detected Windows environment (Bash)."
-    log_info "Please run 'setup.ps1' using PowerShell as Administrator."
+    echo ""
+    echo -e "${YELLOW}Please run the PowerShell script instead:${NC}"
+    echo -e "${BOLD}powershell -ExecutionPolicy Bypass -File setup.ps1${NC}"
     exit 1
 
 else
     log_error "Unsupported Operating System: $OS_TYPE"
+    echo -e "Please install manually."
     exit 1
 fi
